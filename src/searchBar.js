@@ -4,10 +4,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faLink, faTimes, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import logoImage from "./logo.png";
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import json from 'react-syntax-highlighter/dist/esm/languages/prism/json';
 import javascript from 'react-syntax-highlighter/dist/esm/languages/prism/javascript';
-import { grayscale, rainbow } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import ReactMarkdown from 'react-markdown';
 
 SyntaxHighlighter.registerLanguage('json', json);
 SyntaxHighlighter.registerLanguage('javascript', javascript);
@@ -91,37 +90,12 @@ const SearchBar = () => {
   };
 
   const formatMessage = (content) => {
-    const parts = content.split(/```([\s\S]*?)```/);
-    return parts.map((part, index) => {
-      if (index % 2 === 1) {
-        // This is a code block
-        let code = part.trim();
-        let language = 'javascript'; // default language
-        
-        // Check if the code block specifies a language
-        const firstLine = code.split('\n')[0].toLowerCase();
-        if (firstLine === 'json') {
-          language = 'json';
-          code = code.split('\n').slice(1).join('\n'); // Remove the first line
-        } else if (firstLine === 'javascript' || firstLine === 'js') {
-          code = code.split('\n').slice(1).join('\n'); // Remove the first line
-        }
-  
-        return (
-          <SyntaxHighlighter 
-            language={language} 
-            style={oneDark} 
-            customStyle={{borderRadius: '5px', padding: '1em'}}
-          >
-            {code}
-          </SyntaxHighlighter>
-        );
-      } else {
-        // This is regular text
-        return <p key={index}>{part}</p>;
-      }
-    });
-    };
+    return (
+      <ReactMarkdown>
+        {content}
+      </ReactMarkdown>
+    );
+  };
 
   const extractLinkName = (url) => {
     const parts = url.split('/');
