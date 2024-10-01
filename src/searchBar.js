@@ -1,49 +1,112 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './searchBar.css';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faLink, faTimes, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
-import logoImage from "./logo.png";
+import {
+  faSearch,
+  faLink,
+  faTimes,
+  faPaperPlane,
+  faThumbsDown,
+  faThumbsUp,
+} from '@fortawesome/free-solid-svg-icons';
+import remarkGfm from 'remark-gfm';
+import remarkPrism from 'remark-prism';
+
+import logoImage from './logo.png';
+
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
 import json from 'react-syntax-highlighter/dist/esm/languages/prism/json';
 import javascript from 'react-syntax-highlighter/dist/esm/languages/prism/javascript';
+
 import ReactMarkdown from 'react-markdown';
 
 SyntaxHighlighter.registerLanguage('json', json);
 SyntaxHighlighter.registerLanguage('javascript', javascript);
 
 const SearchBar = () => {
+  // State variables
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [sessionId, setSessionId] = useState(null);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const [feedbackType, setFeedbackType] = useState(null);
+  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+  const [feedbackText, setFeedbackText] = useState('');
+
+  // References
   const abortControllerRef = useRef(null);
 
+  // Handle feedback submission
+  const handleSubmit = async () => {
+    const responseObj = messages[currentMessageIndex];
+    const { conversation_id, session_id } = responseObj.metadata;
+    const responseMessage = responseObj.content;
+
+    const feedbackData = {
+      session_id,
+      conversation_id,
+      message: responseMessage,
+      comment: feedbackText,
+      like: feedbackType,
+    };
+
+    try {
+      const response = await fetch('http://0.0.0.0:8080/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(feedbackData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit feedback');
+      }
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+    }
+
+    setFeedbackText('');
+    setIsFeedbackModalOpen(false);
+  };
+
+  const openFeedbackModal = (type, index) => {
+    setFeedbackType(type);
+    setCurrentMessageIndex(index);
+    setIsFeedbackModalOpen(true);
+  };
+
+  const cancelFeedbackModal = () => {
+    setFeedbackText('');
+    setCurrentMessageIndex(messages.length - 1);
+    setIsFeedbackModalOpen(false);
+  };
+
+  // Handle search submission
   const handleSearch = async (e) => {
     e.preventDefault();
     if (searchTerm.trim() === '') return;
 
-    // If we're already streaming, stop the current stream
-    if (isStreaming) {
-      abortControllerRef.current.abort();
-    }
-
     const newUserMessage = { type: 'user', content: searchTerm };
-    setMessages(prevMessages => [...prevMessages, newUserMessage]);
+    let newAssistantMessage = {
+      type: 'assistant',
+      content: '',
+      metadata: null,
+      isComplete: false,
+    };
 
-    let assistantMessage = { type: 'assistant', content: '', metadata: null };
-    setMessages(prevMessages => [...prevMessages, assistantMessage]);
-
-    setSearchTerm(''); // Clear the search term
+    setMessages((prevMessages) => [...prevMessages, newUserMessage, newAssistantMessage]);
+    setSearchTerm('');
     setIsStreaming(true);
 
     try {
       abortControllerRef.current = new AbortController();
-      const response = await fetch('https://backend-534221778462.us-central1.run.app/process_query', {
+
+      const response = await fetch('http://0.0.0.0:8080/process_query', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ query: searchTerm }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: searchTerm, session_id: sessionId }),
         signal: abortControllerRef.current.signal,
       });
 
@@ -53,36 +116,52 @@ const SearchBar = () => {
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
-        
+
         const chunk = decoder.decode(value, { stream: true });
-        
-        // Parse the chunk and update the assistant's message
         const lines = chunk.split('\n');
+
         for (const line of lines) {
           if (line.startsWith('data: ')) {
             const data = JSON.parse(line.slice(6));
+
             if (data.type === 'content') {
-              assistantMessage.content += data.text;
+              newAssistantMessage.content += data.text;
             } else if (data.type === 'metadata') {
-              assistantMessage.metadata = data;
+              newAssistantMessage.metadata = data;
+              if (!sessionId) {
+                setSessionId(data.session_id);
+              }
             }
-            setMessages(prevMessages => 
-              prevMessages.map((msg, index) => 
-                index === prevMessages.length - 1 ? {...assistantMessage} : msg
+
+            setMessages((prevMessages) =>
+              prevMessages.map((msg, idx) =>
+                idx === prevMessages.length - 1 ? { ...newAssistantMessage } : msg
               )
             );
           }
         }
       }
-
-      console.log('Stream complete');
+      newAssistantMessage.isComplete = true;
+      setMessages((prevMessages) =>
+        prevMessages.map((msg, idx) =>
+          idx === prevMessages.length - 1 ? { ...newAssistantMessage } : msg
+        )
+      );
     } catch (error) {
       if (error.name === 'AbortError') {
-        console.log('Stream aborted');
+        newAssistantMessage.isComplete = true;
+        setMessages((prevMessages) =>
+          prevMessages.map((msg, idx) =>
+            idx === prevMessages.length - 1 ? { ...newAssistantMessage } : msg
+          )
+        );
       } else {
         console.error('Error fetching data:', error);
-        const errorMessage = { type: 'assistant', content: 'Sorry, there was an error processing your request.' };
-        setMessages(prevMessages => [...prevMessages, errorMessage]);
+        const errorMessage = {
+          type: 'assistant',
+          content: 'Sorry, there was an error processing your request.',
+        };
+        setMessages((prevMessages) => [...prevMessages, errorMessage]);
       }
     } finally {
       setIsStreaming(false);
@@ -90,23 +169,24 @@ const SearchBar = () => {
   };
 
   const formatMessage = (content) => {
-    return (
-      <ReactMarkdown>
-        {content}
-      </ReactMarkdown>
-    );
+    return <ReactMarkdown>{content}</ReactMarkdown>;
   };
 
-  const extractLinkName = (url) => {
-    const parts = url.split('/');
-    const lastPart = parts[parts.length - 1];
-    return lastPart
-      .split(/(?=[A-Z])/)
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-  };
-  
-  const renderMessageContent = (message) => {
+  // Handle session cleanup on unload
+  useEffect(() => {
+    const handleUnload = () => {
+      if (sessionId) {
+        const data = JSON.stringify({ session_id: sessionId });
+        const blob = new Blob([data], { type: 'application/json' });
+        navigator.sendBeacon('http://0.0.0.0:8080/end_session', blob);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleUnload);
+    return () => window.removeEventListener('beforeunload', handleUnload);
+  }, [sessionId]);
+
+  const renderMessageContent = (message, index) => {
     if (message.type === 'assistant' && message.content === '' && isStreaming) {
       return (
         <div className="typing-indicator">
@@ -116,17 +196,40 @@ const SearchBar = () => {
         </div>
       );
     }
+
     return (
       <>
         {formatMessage(message.content)}
+        {message.type === 'assistant' && message.isComplete && (
+          <div className="feedback-buttons">
+            <button
+              className="feedback-button positive"
+              onClick={() => openFeedbackModal('positive', index)}
+            >
+              <FontAwesomeIcon icon={faThumbsUp} /> Helpful
+            </button>
+            <button
+              className="feedback-button negative"
+              onClick={() => openFeedbackModal('negative', index)}
+            >
+              <FontAwesomeIcon icon={faThumbsDown} /> Not Helpful
+            </button>
+          </div>
+        )}
         {message.metadata && message.metadata.url && (
           <div className="metadata-links">
             <h4>Related Links</h4>
             <div className="link-list">
               {message.metadata.url.slice(0, 3).map((link, i) => (
-                <a key={i} href={link} target="_blank" rel="noopener noreferrer" className="link-item">
+                <a
+                  key={i}
+                  href={link.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-item"
+                >
                   <FontAwesomeIcon icon={faLink} className="link-icon" />
-                  <span className="link-text">{extractLinkName(link)}</span>
+                  <span className="link-text">{link.topicName}</span>
                 </a>
               ))}
             </div>
@@ -135,6 +238,7 @@ const SearchBar = () => {
       </>
     );
   };
+
   return (
     <>
       <form onSubmit={handleSearch} className="search-form">
@@ -147,18 +251,25 @@ const SearchBar = () => {
             className="search-input"
             onClick={() => setIsModalOpen(true)}
           />
-          <button type="submit" className="search-button" disabled={searchTerm.trim() === ''}>
+          <button
+            type="submit"
+            className="search-button"
+            onClick={() => setIsModalOpen(true)}
+          >
             <FontAwesomeIcon icon={faSearch} />
           </button>
         </div>
       </form>
-      
+
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal">
             <div className="modal-header">
               <h2>Ask Me Anything</h2>
-              <button onClick={() => setIsModalOpen(false)} className="close-button">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="close-button"
+              >
                 <FontAwesomeIcon icon={faTimes} />
               </button>
             </div>
@@ -168,13 +279,17 @@ const SearchBar = () => {
                   <div key={index} className={`message ${message.type}`}>
                     <div className="message-avatar">
                       {message.type === 'assistant' ? (
-                        <img src={logoImage} alt="Assistant" className="avatar-image" />
+                        <img
+                          src={logoImage}
+                          alt="Assistant"
+                          className="avatar-image"
+                        />
                       ) : (
                         <span className="user-avatar">U</span>
                       )}
                     </div>
                     <div className="message-content">
-                    {renderMessageContent(message)}
+                      {renderMessageContent(message, index)}
                     </div>
                   </div>
                 ))}
@@ -187,12 +302,53 @@ const SearchBar = () => {
                   placeholder="Ask me anything about Metronome . . ."
                   className="modal-input"
                 />
-                <button type="submit" className="send-button" disabled={searchTerm.trim() === ''}>
+                <button
+                  type="submit"
+                  className="send-button"
+                  disabled={searchTerm.trim() === ''}
+                >
                   <FontAwesomeIcon icon={faPaperPlane} />
                 </button>
               </form>
             </div>
           </div>
+          {isFeedbackModalOpen && (
+            <div className="popup-overlay">
+              <div className="popup feedback-popup">
+                <div className="popup-header">
+                  <h2>Feedback</h2>
+                  <button
+                    onClick={cancelFeedbackModal}
+                    className="close-button"
+                  >
+                    <FontAwesomeIcon icon={faTimes} />
+                  </button>
+                </div>
+                <div className="popup-content">
+                  <p className="feedback-prompt">
+                    Please provide details: (optional)
+                  </p>
+                  <textarea
+                    className="feedback-textarea"
+                    value={feedbackText}
+                    onChange={(e) => setFeedbackText(e.target.value)}
+                    placeholder={
+                      feedbackType === 'positive'
+                        ? 'What was satisfying about this response?'
+                        : 'What was unsatisfying about this response?'
+                    }
+                  />
+                  <button
+                    type="submit"
+                    onClick={handleSubmit}
+                    className="submit-button"
+                  >
+                    Submit Feedback
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </>
