@@ -16,10 +16,49 @@ pre {
   font-size: 16px;
   line-height: 1.4;
 }
-
-code {
+/* Styles for inline code */
+p code, li code, td code {
+  color: #053922;
+  font-weight: bold;
+  background-color: #ddd;
+  padding: 2px 4px;
+  border-radius: 4px;
   font-family: 'Courier New', Courier, monospace;
 }
+
+/* Styles for code blocks */
+pre {
+  background-color: #2d2d2d;
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+}
+
+pre code {
+  color: #e0e0e0;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  background-color: transparent;
+  padding: 0;
+  font-weight: normal;
+}
+
+/* Ensure syntax highlighting styles are not overridden */
+.message-content .react-syntax-highlighter {
+  background: transparent !important;
+}
+
+.message-content .react-syntax-highlighter code {
+  font-family: 'Courier New', Courier, monospace !important;
+  background-color: transparent !important;
+  padding: 0 !important;
+  font-weight: normal !important;
+  color: inherit !important;
+}
+
+
+
 
 /* Search Bar Styles */
 .search-form {
@@ -250,10 +289,9 @@ code {
   margin: 10px 0;
 }
 
-.message-content code {
-  font-family: 'Courier New', Courier, monospace;
-  white-space: pre-wrap;
-  word-break: break-all;
+.message-content .react-syntax-highlighter {
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 /* Typing Indicator */
