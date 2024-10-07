@@ -31,6 +31,7 @@ const LandingPage = () => {
           flex-direction: column;
           min-height: 100vh;
           min-width: 100%;
+          font-family: Arial, sans-serif;
         }
 
         .main-content {

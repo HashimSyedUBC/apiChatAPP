@@ -9,6 +9,7 @@ const ModernCompanyForm = () => {
     briefDescription: '',
     documentationLink: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,7 +21,21 @@ const ModernCompanyForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     console.log('Form submitted:', formData);
+
+    // Simulate form submission
+    setTimeout(() => {
+      setIsSubmitting(false);
+      // Reset form after submission
+      setFormData({
+        companyEmail: '',
+        companyName: '',
+        companyNumber: '',
+        briefDescription: '',
+        documentationLink: ''
+      });
+    }, 2000); // Change back after 2 seconds
   };
 
   return (
@@ -92,7 +107,13 @@ const ModernCompanyForm = () => {
           />
         </div>
 
-        <button type="submit" className="submit-button-form">Submit</button>
+        <button 
+          type="submit" 
+          className={`submit-button-form ${isSubmitting ? 'submitting' : ''}`}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? 'Success!' : 'Submit'}
+        </button>
       </form>
     </div>
   );
