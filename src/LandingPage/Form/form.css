@@ -1,0 +1,149 @@
+/* Updated CSS */
+.form-container-form {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+}
+
+.modern-form-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-title-form {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+    margin-top: 0px;
+    text-align: center;
+}
+
+.highlight-form {
+    color: white;
+    background-color: #00ff88;
+    display: inline-block;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.form-field-form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.form-field-form label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 6px;
+}
+
+.form-field-form input,
+.form-field-form textarea {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 16px;
+    border: 2px solid #1a1a1a;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-field-form input:focus,
+.form-field-form textarea:focus {
+    outline: none;
+    border-color: #00ff88;
+    box-shadow: 0 0 0 4px rgba(0, 255, 136, 0.1);
+    background-color: #ffffff;
+}
+
+.form-field-form textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.submit-button-form {
+    align-self: flex-end;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.submit-button-form:hover {
+    background-color: #00ff88;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+    .form-container-form {
+        padding: 20px;
+        margin: 20px auto;
+        max-width: calc(100% - 40px); /* Ensure some side margins on very small screens */
+    }
+
+    .form-title-form {
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+
+    .modern-form-form {
+        gap: 15px;
+    }
+
+    .form-field-form label {
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+
+    .form-field-form input,
+    .form-field-form textarea {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    .form-field-form textarea {
+        min-height: 80px;
+    }
+
+    .submit-button-form {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 16px;
+        margin-top: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-container-form {
+        padding: 15px;
+        margin: 15px auto;
+    }
+
+    .form-title-form {
+        font-size: 22px;
+    }
+
+    .modern-form-form {
+        gap: 12px;
+    }
+
+    .form-field-form input,
+    .form-field-form textarea {
+        padding: 8px 10px;
+    }
+}

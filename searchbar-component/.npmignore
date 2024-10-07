@@ -1,0 +1,9 @@
+src/
+webpack.config.js
+.babelrc
+.gitignore
+package-lock.json
+node_modules/
+*.log
+*.md
+!.README.md

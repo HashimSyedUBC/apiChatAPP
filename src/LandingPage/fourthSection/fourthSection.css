@@ -1,0 +1,139 @@
+.enhancement-section {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  padding: 0 1rem;
+  padding-top: 4rem;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.highlight {
+  background-color: #00ff88;
+  color: #121212;
+  padding: 0 0.5rem;
+}
+
+.section-description {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 3rem;
+}
+
+.timeline {
+  position: relative;
+  padding: 2rem 0; /* Add padding to the timeline container */
+  padding-bottom: 1px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height:  85%;
+  background-color: #00ff88;
+  transform: translateX(-50%);
+}
+
+.timeline-item {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 50px; /* Increase padding for consistent spacing */
+  position: relative;
+  margin-bottom: 4rem; /* Increase margin between items */
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+
+.timeline-item:nth-child(even) {
+  justify-content: flex-start;
+  padding-right: 0;
+  padding-left: 50px; /* Increase padding for consistent spacing */
+}
+
+.timeline-content {
+  width: 45%;
+  margin-top: -24px;
+}
+
+.timeline-icon {
+  position: absolute;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #00ff88;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%); /* Center the icon vertically */
+  top: 0; /* Align with the top of the content */
+}
+
+.timeline-icon i {
+  color: #121212;
+  font-size: 1.2rem;
+}
+
+.timeline-title {
+  font-size: 1.5rem;
+  color: #00ff88;
+  margin-bottom: 0.5rem;
+  margin: 0;
+}
+
+.timeline-description {
+  color: #cccccc;
+}
+
+.timeline-item:nth-child(even) .timeline-content {
+  text-align: left; /* Align text to the left for even items */
+}
+
+.timeline-item:nth-child(odd) .timeline-content {
+  text-align: right; /* Align text to the right for odd items */
+}
+
+.timeline-item.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .timeline::before {
+    left: 40px;
+  }
+
+  .timeline-item,
+  .timeline-item:nth-child(even) {
+    justify-content: flex-start;
+    padding-left: 80px;
+    padding-right: 0;
+  }
+
+  .timeline-icon {
+    left: 40px;
+  }
+
+  .timeline-content {
+    width: calc(100% - 80px);
+  }
+
+  .timeline-item:nth-child(even) .timeline-content,
+  .timeline-item:nth-child(odd) .timeline-content {
+    text-align: left; /* Align all text to the left on mobile */
+  }
+}
