@@ -1,9 +1,5 @@
-
-
-import logoImage from './logo.png';
 import LandingPage from './LandingPage/LandingPage';
 import React from 'react';
-import SearchBar from "./searchBar.js";
 import './App.css';
 
 
