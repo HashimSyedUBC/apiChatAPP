@@ -2,7 +2,7 @@ import React from 'react';
 import phone from './phone.png';
 import tablet from './tablet.png';
 import desktop from './desktop.png';
-import { Zap, FileText, LightbulbIcon, Code, Puzzle } from 'lucide-react';
+import { Zap, LightbulbIcon, Code, Puzzle } from 'lucide-react';
 import './ContextualAwarenessSection.css';
 
 const ContextualAwarenessSection = () => {
