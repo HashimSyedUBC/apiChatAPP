@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.css": "/apaiChatApp/static/css/main.18881b98.css",
+    "main.js": "/apaiChatApp/static/js/main.5755e1d7.js",
+    "static/js/453.99dcf01f.chunk.js": "/apaiChatApp/static/js/453.99dcf01f.chunk.js",
+    "static/media/document2.png": "/apaiChatApp/static/media/document2.6dfa4390c7e3cdfb3226.png",
+    "static/media/desktop.png": "/apaiChatApp/static/media/desktop.a337d91844608b4ec93b.png",
+    "static/media/document3.png": "/apaiChatApp/static/media/document3.e12e7a69d7d71acb6a5d.png",
+    "static/media/tablet.png": "/apaiChatApp/static/media/tablet.7fb8c149daa22e866547.png",
+    "static/media/document1.png": "/apaiChatApp/static/media/document1.301f3c9b9e52a65b81ee.png",
+    "static/media/phone.png": "/apaiChatApp/static/media/phone.174a5734c3e159b1aaea.png",
+    "index.html": "/apaiChatApp/index.html",
+    "main.18881b98.css.map": "/apaiChatApp/static/css/main.18881b98.css.map",
+    "main.5755e1d7.js.map": "/apaiChatApp/static/js/main.5755e1d7.js.map",
+    "453.99dcf01f.chunk.js.map": "/apaiChatApp/static/js/453.99dcf01f.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.18881b98.css",
+    "static/js/main.5755e1d7.js"
+  ]
+}
