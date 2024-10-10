@@ -38,9 +38,9 @@
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
 }
 
-.image-1Context { top: 0; left: 0; z-index: 1; width: 55%; }
-.image-2Context { top: 5%; right: 0; z-index: 2; width: 55%; }
-.image-3Context { bottom: 0; left: 10%; z-index: 3; width: 80%; }
+.image-1Context { top: 0; left: 0; z-index: 1; width: 60%; }
+.image-2Context { top: 5%; right: 0; z-index: 2; width: 60%; }
+.image-3Context { bottom: 5%; left: 10%; z-index: 3; width: 80%; }
 
 .text-contentContext {
   flex: 1;
