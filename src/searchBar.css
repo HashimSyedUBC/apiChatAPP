@@ -35,7 +35,7 @@ pre {
 }
 
 pre code {
-  color: #e0e0e0;
+  color: white;
   font-family: 'Courier New', Courier, monospace;
   font-size: 14px;
   line-height: 1.5;
@@ -281,7 +281,7 @@ pre code {
 }
 
 .message-content pre {
-  background-color: white;
+  background-color: rgb(30, 30, 30);
   border: 1px solid #053922;
   border-radius: 4px;
   padding: 10px;
