@@ -1,16 +1,19 @@
-import LandingPage from './LandingPage/LandingPage';
 import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import LandingPage from './LandingPage/LandingPage';
 import './App.css';
-
+import SearchBar from './searchBar';
 
 function App() {
   return (
-    <div className="App" style={{margin: 0, backgroundColor: 'white', minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <LandingPage />
-    </div>
-    // <div className="App" style={{ backgroundColor: 'white', minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-    //   <SearchBar />
-    // </div>
+    <Router>
+      <div className="App" style={{margin: 0, backgroundColor: 'white', minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/demo" element={<SearchBar />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

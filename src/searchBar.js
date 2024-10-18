@@ -68,7 +68,7 @@ const SearchBar = () => {
     };
 
     try {
-      const response = await fetch('http://0.0.0.0:8080/feedback', {
+      const response = await fetch('https://apai-app-534221778462.us-east1.run.app/process_query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(feedbackData),
@@ -216,7 +216,7 @@ const SearchBar = () => {
       if (sessionId) {
         const data = JSON.stringify({ session_id: sessionId });
         const blob = new Blob([data], { type: 'application/json' });
-        navigator.sendBeacon('http://0.0.0.0:8080/end_session', blob);
+        navigator.sendBeacon('https://apai-app-534221778462.us-east1.run.app/process_query', blob);
       }
     };
 
