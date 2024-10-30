@@ -117,7 +117,7 @@ const SearchBar = () => {
     try {
       abortControllerRef.current = new AbortController();
 
-      const response = await fetch('http://0.0.0.0:8080/process_query', {
+      const response = await fetch('https://apai-app-534221778462.us-east1.run.app/process_query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: searchTerm, session_id: sessionId }),
