@@ -68,7 +68,7 @@ const SearchBar = () => {
     };
 
     try {
-      const response = await fetch('https://apai-app-534221778462.us-east1.run.app/process_query', {
+      const response = await fetch('http://0.0.0.0:8080/process_query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(feedbackData),
@@ -117,7 +117,7 @@ const SearchBar = () => {
     try {
       abortControllerRef.current = new AbortController();
 
-      const response = await fetch('https://apai-app-534221778462.us-east1.run.app/process_query', {
+      const response = await fetch('http://0.0.0.0:8080/process_query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: searchTerm, session_id: sessionId }),
@@ -216,7 +216,7 @@ const SearchBar = () => {
       if (sessionId) {
         const data = JSON.stringify({ session_id: sessionId });
         const blob = new Blob([data], { type: 'application/json' });
-        navigator.sendBeacon('https://apai-app-534221778462.us-east1.run.app/process_query', blob);
+        navigator.sendBeacon(' http://0.0.0.0:8080/process_query', blob);
       }
     };
 
@@ -254,11 +254,11 @@ const SearchBar = () => {
             </button>
           </div>
         )}
-        {message.metadata && message.metadata.url && (
+        {message.metadata && message.metadata.url && ( 
           <div className="metadata-links">
             <h4>Related Links</h4>
             <div className="link-list">
-              {message.metadata.url.slice(0, 3).map((link, i) => (
+              {message.metadata.url.slice(0, 6).map((link, i) => (
                 <a
                   key={i}
                   href={link.link}
